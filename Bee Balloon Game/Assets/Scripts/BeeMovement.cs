@@ -7,10 +7,21 @@ public class BeeMovement : MonoBehaviour
     public Vector2 boundsMin = new Vector2(-8f, -4.5f); // Minimum x and y boundaries
     public Vector2 boundsMax = new Vector2(8f, 4.5f);  // Maximum x and y boundaries
 
+    private PolygonCollider2D boundary;
+
+    private void Start()
+    {
+        boundary = FindObjectOfType<PolygonCollider2D>();
+    }
+
     void Update()
     {
         // Follow the mouse position
         FollowMouse();
+
+        // Constrain the bee's position within the boundary
+        Vector3 clampedPosition = boundary.ClosestPoint(transform.position);
+        transform.position = new Vector3(clampedPosition.x, clampedPosition.y, transform.position.z);
     }
 
     private void FollowMouse()
