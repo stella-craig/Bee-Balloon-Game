@@ -1735,7 +1735,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!70 &1922385126
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
@@ -2032,10 +2032,6 @@ PrefabInstance:
     - target: {fileID: 2358324770175578702, guid: e8773084b666a814da3c905eaf995cd8, type: 3}
       propertyPath: m_Name
       value: FishZone
-      objectReference: {fileID: 0}
-    - target: {fileID: 2358324770175578702, guid: e8773084b666a814da3c905eaf995cd8, type: 3}
-      propertyPath: m_IsActive
-      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7646816705608146444, guid: e8773084b666a814da3c905eaf995cd8, type: 3}
       propertyPath: m_LocalPosition.x
