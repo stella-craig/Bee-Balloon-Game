@@ -642,6 +642,11 @@ MonoBehaviour:
   scoreText: {fileID: 1474971800}
   livesText: {fileID: 1586503749}
   levelText: {fileID: 291242668}
+  progressBar: {fileID: 745526861}
+  balloonsPerLevel: 4300000082000000c8000000
+  bee: {fileID: 1922385125}
+  branchesZone: {fileID: 1572230375}
+  fishZone: {fileID: 1591842086}
 --- !u!1 &667150362
 GameObject:
   m_ObjectHideFlags: 0
@@ -1362,6 +1367,11 @@ Transform:
   - {fileID: 2051747053}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1572230375 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3101735235733826566, guid: 0756160771bdae0499df01ce4c7f099c, type: 3}
+  m_PrefabInstance: {fileID: 207938143213882503}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1586503747
 GameObject:
   m_ObjectHideFlags: 0
@@ -1441,6 +1451,11 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1586503747}
   m_CullTransparentMesh: 1
+--- !u!1 &1591842086 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2358324770175578702, guid: e8773084b666a814da3c905eaf995cd8, type: 3}
+  m_PrefabInstance: {fileID: 3331932471489732463}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1601497481
 GameObject:
   m_ObjectHideFlags: 0
@@ -1976,6 +1991,38 @@ PrefabInstance:
       propertyPath: m_Name
       value: BranchesZone
       objectReference: {fileID: 0}
+    - target: {fileID: 3101735235733826566, guid: 0756160771bdae0499df01ce4c7f099c, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7428065254299649345, guid: 0756160771bdae0499df01ce4c7f099c, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7428065254299649345, guid: 0756160771bdae0499df01ce4c7f099c, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7428065254299649345, guid: 0756160771bdae0499df01ce4c7f099c, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 11500000, guid: 825a0095c8efb0f46a68757132b7eb99, type: 3}
+    - target: {fileID: 7428065254299649345, guid: 0756160771bdae0499df01ce4c7f099c, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7428065254299649345, guid: 0756160771bdae0499df01ce4c7f099c, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: set_name
+      objectReference: {fileID: 0}
+    - target: {fileID: 7428065254299649345, guid: 0756160771bdae0499df01ce4c7f099c, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 7428065254299649345, guid: 0756160771bdae0499df01ce4c7f099c, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
     - target: {fileID: 8519281232876915664, guid: 0756160771bdae0499df01ce4c7f099c, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -2032,6 +2079,10 @@ PrefabInstance:
     - target: {fileID: 2358324770175578702, guid: e8773084b666a814da3c905eaf995cd8, type: 3}
       propertyPath: m_Name
       value: FishZone
+      objectReference: {fileID: 0}
+    - target: {fileID: 2358324770175578702, guid: e8773084b666a814da3c905eaf995cd8, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7646816705608146444, guid: e8773084b666a814da3c905eaf995cd8, type: 3}
       propertyPath: m_LocalPosition.x
