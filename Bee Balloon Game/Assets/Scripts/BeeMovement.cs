@@ -3,7 +3,7 @@ using UnityEngine;
 public class BeeMovement : MonoBehaviour
 {
     [Header("Movement Settings")]
-    public float speed = 50f; // Speed of the bee's movement
+    public float speed = 1f; // Speed of the bee's movement
     public Vector2 boundsMin = new Vector2(-8f, -4.5f); // Minimum x and y boundaries
     public Vector2 boundsMax = new Vector2(8f, 4.5f);  // Maximum x and y boundaries
 
