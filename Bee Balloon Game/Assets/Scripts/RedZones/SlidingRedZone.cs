@@ -12,9 +12,18 @@ public class EasingSpike : MonoBehaviour
 
     private void Start()
     {
+        // Cache initial scale and collider
         initialScale = transform.localScale;
         transform.localScale = new Vector3(initialScale.x, 0, initialScale.z); // Start hidden
         spikeCollider = GetComponent<Collider2D>();
+
+        if (spikeCollider == null)
+        {
+            Debug.LogError("Collider2D is missing on the spike!");
+        }
+
+        // Start with the collider disabled
+        spikeCollider.enabled = false;
     }
 
     private void Update()
@@ -25,6 +34,7 @@ public class EasingSpike : MonoBehaviour
             return;
         }
 
+        // Handle growing and shrinking
         if (isGrowing)
         {
             // Increase the Y scale
@@ -59,6 +69,18 @@ public class EasingSpike : MonoBehaviour
         }
 
         // Enable/disable the collider based on visibility
-        spikeCollider.enabled = transform.localScale.y > 0;
+        if (spikeCollider != null)
+        {
+            spikeCollider.enabled = transform.localScale.y > 0.1f;
+        }
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Bee")) // Ensure your player GameObject is tagged as "Bee"
+        {
+            Debug.Log("Spike hit! Losing a life.");
+            GameManager.Instance?.LoseLife();
+        }
     }
 }
