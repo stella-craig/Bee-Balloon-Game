@@ -443,8 +443,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1567359123}
-        m_TargetAssemblyTypeName: RestartButton, Assembly-CSharp
+      - m_Target: {fileID: 1567359125}
+        m_TargetAssemblyTypeName: EndScreenManager, Assembly-CSharp
         m_MethodName: RestartGame
         m_Mode: 1
         m_Arguments:
@@ -652,7 +652,7 @@ AudioListener:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 792722249}
-  m_Enabled: 1
+  m_Enabled: 0
 --- !u!20 &792722251
 Camera:
   m_ObjectHideFlags: 0
@@ -807,7 +807,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1567359124}
-  - component: {fileID: 1567359123}
   - component: {fileID: 1567359125}
   m_Layer: 0
   m_Name: RestartManager
@@ -816,18 +815,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1567359123
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1567359122}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9e78bfa0f0a0be642832dbe3294a7c62, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!4 &1567359124
 Transform:
   m_ObjectHideFlags: 0

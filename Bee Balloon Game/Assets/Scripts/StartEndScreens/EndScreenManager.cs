@@ -1,8 +1,19 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
-public class RestartButton : MonoBehaviour
+public class EndScreenManager : MonoBehaviour
 {
+    public Text finalScoreText;
+
+    private void Start()
+    {
+        if (GameManager.Instance != null)
+        {
+            finalScoreText.text = "Final Score: " + GameManager.Instance.score;
+        }
+    }
+
     public void RestartGame()
     {
         Debug.Log("Restart button clicked!");
