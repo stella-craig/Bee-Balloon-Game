@@ -5,37 +5,60 @@ using UnityEngine.UI;
 public class EndScreenManager : MonoBehaviour
 {
     public Text finalScoreText;
+    public Text finalTimeText;
+    public InputField feedbackInputField; // To collect player feedback
+    public Button submitFeedbackButton;
+
+    private string playerFeedback = ""; // Store feedback locally
 
     private void Start()
     {
-        if (GameManager.Instance != null)
-        {
-            finalScoreText.text = "Final Score: " + GameManager.Instance.score;
-        }
+        // Load data from PlayerPrefs
+        int finalScore = PlayerPrefs.GetInt("FinalScore", 0);
+        float timePlayed = PlayerPrefs.GetFloat("TimePlayed", 0f);
+        int finalLevel = PlayerPrefs.GetInt("FinalLevel", 1);
+
+        // Update UI elements
+        finalScoreText.text = $"Final Score: {finalScore}";
+        finalTimeText.text = $"Time Played: {FormatTime(timePlayed)}";
+
+        // Set up feedback submission
+        submitFeedbackButton.onClick.AddListener(SubmitFeedback);
+    }
+
+    private string FormatTime(float time)
+    {
+        int minutes = Mathf.FloorToInt(time / 60);
+        int seconds = Mathf.FloorToInt(time % 60);
+        return $"{minutes:D2}:{seconds:D2}";
+    }
+
+    public void SubmitFeedback()
+    {
+        playerFeedback = feedbackInputField.text;
+        Debug.Log($"Player Feedback Submitted: {playerFeedback}");
     }
 
     public void RestartGame()
     {
-        Debug.Log("Restart button clicked!");
-        Debug.Log($"Current Scene: {SceneManager.GetActiveScene().name}");
+        // Emit all data, including feedback
+        EmitPlayerData();
 
-        if (GameManager.Instance != null)
-        {
-            GameManager.Instance.RestartGame();
-        }
-        else
-        {
-            Debug.LogError("GameManager instance is missing. Unable to restart.");
-        }
+        Debug.Log("Restarting game...");
+        SceneManager.LoadScene("StartScene");
+    }
 
-        if (Application.CanStreamedLevelBeLoaded("StartScene"))
-        {
-            Debug.Log("StartScene found. Loading...");
-            SceneManager.LoadScene("StartScene");
-        }
-        else
-        {
-            Debug.LogError("StartScene could not be loaded. Check scene name or build settings.");
-        }
+    private void EmitPlayerData()
+    {
+        // Collect data and log it as JSON
+        int finalScore = PlayerPrefs.GetInt("FinalScore", 0);
+        float timePlayed = PlayerPrefs.GetFloat("TimePlayed", 0f);
+        int finalLevel = PlayerPrefs.GetInt("FinalLevel", 1);
+
+        string playerDataJson = $"{{\"score\": {finalScore}, \"timePlayed\": \"{FormatTime(timePlayed)}\", \"level\": {finalLevel}, \"feedback\": \"{playerFeedback}\"}}";
+
+        Debug.Log("Player Data and Feedback JSON: " + playerDataJson);
+
+        // Optionally: Send this JSON to a database or log it somewhere
     }
 }
