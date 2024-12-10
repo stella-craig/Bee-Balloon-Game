@@ -12,8 +12,10 @@ GameObject:
   - component: {fileID: 5560241130051428504}
   - component: {fileID: 7325377635962682884}
   - component: {fileID: -3112690400512769593}
+  - component: {fileID: 7566352019608918645}
+  - component: {fileID: 4985277057544926138}
   m_Layer: 0
-  m_Name: RedZone
+  m_Name: Red_Circle
   m_TagString: Bomb
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -29,7 +31,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: -1.381, z: 0}
-  m_LocalScale: {x: 4.3142953, y: 0.5581, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -143,3 +145,33 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
+--- !u!114 &7566352019608918645
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8959762939970409059}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 66e60c96c6fc16945b62de253ada698d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  expandSpeed: 2
+  maxScale: {x: 2, y: 2}
+  minScale: {x: 1, y: 1}
+--- !u!114 &4985277057544926138
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8959762939970409059}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 66e60c96c6fc16945b62de253ada698d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  expandSpeed: 0.5
+  maxScale: {x: 16, y: 16}
+  minScale: {x: 0.5, y: 0.5}
