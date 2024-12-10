@@ -749,6 +749,8 @@ GameObject:
   - component: {fileID: 1956513728}
   - component: {fileID: 1956513727}
   - component: {fileID: 1956513726}
+  - component: {fileID: 1956513730}
+  - component: {fileID: 1956513729}
   m_Layer: 0
   m_Name: Camera
   m_TagString: Untagged
@@ -830,6 +832,32 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1956513729
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1956513725}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 855e269332dc393458cec0f4d69bfbc2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  firebaseConfigPath: google-services.js
+--- !u!114 &1956513730
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1956513725}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e7876cf8ebacaa44c86e1ac3599fac60, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  firebaseConfigPath: google-services.js
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
