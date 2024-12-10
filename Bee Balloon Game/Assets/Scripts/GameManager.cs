@@ -57,7 +57,7 @@ public class GameManager : MonoBehaviour
         LoadZone(currentLevel);
         UpdateUI();
         UpdateProgressBar();
-        UpdateTimerUI(); // Initialize the timer UI
+        UpdateTimerUI();
     }
 
     private void Update()
@@ -295,10 +295,8 @@ public class GameManager : MonoBehaviour
     }
 
 
-    /// <summary>
+
     /// Debug method to instantly set the score and transition to the corresponding level.
-    /// </summary>
-    /// <param name="targetScore">The score to set for debugging.</param>
     public void DebugSetScore(int targetScore)
     {
         // Set the score to the target value
@@ -342,6 +340,47 @@ public class GameManager : MonoBehaviour
         RespawnBee();
         UpdateUI();
         UpdateProgressBar();
+    }
+
+    public void RestartGame()
+    {
+        // Reset all game state variables
+        score = 0;
+        lives = 3;
+        currentLevel = 0;
+        timer = 120f;
+
+        // Destroy the active zone and bee
+        if (activeZone != null)
+        {
+            Destroy(activeZone);
+        }
+        if (bee != null)
+        {
+            Destroy(bee);
+        }
+
+        // Reset the progress bar
+        if (progressBar != null)
+        {
+            progressBar.size = 0;
+        }
+
+        // Destroy any lingering cameras
+        DestroyPersistingCamera();
+
+        // Reload StartScene and ensure GameManager resets
+        SceneManager.LoadScene("StartScene");
+    }
+
+
+    private void DestroyPersistingCamera()
+    {
+        GameObject mainCamera = GameObject.FindWithTag("MainCamera");
+        if (mainCamera != null && mainCamera.transform.parent == null) // Ensure it's not nested
+        {
+            Destroy(mainCamera);
+        }
     }
 
 
