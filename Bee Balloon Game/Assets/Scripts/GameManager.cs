@@ -1,10 +1,10 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using System.Collections;
 using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
+    // Singleton instance
     public static GameManager Instance { get; private set; }
 
     // Player stats
@@ -14,24 +14,9 @@ public class GameManager : MonoBehaviour
     public Text livesText;
     public Text levelText;
 
-    // Final score for end screens
-    public int finalScore;
-
-    // Level and progress tracking
-    public Scrollbar progressBar;
-    public int[] balloonsPerLevel = { 92, 67, 50, 64 };
-    private int currentLevel = 0;
-
-    [Header("Zone Prefabs")]
-    public GameObject beePrefab;
-    public GameObject[] zonePrefabs;
-
-    private GameObject activeZone;
-    private GameObject bee;
-    private BeeMovement beeMovement;
-
     private void Awake()
     {
+        // Ensure only one instance of GameManager exists
         if (Instance != null && Instance != this)
         {
             Destroy(gameObject);
@@ -45,178 +30,56 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-        ValidatePrefabs();
-        SpawnBee();
-        LoadZone(currentLevel);
         UpdateUI();
-        UpdateProgressBar();
     }
 
-    private void ValidatePrefabs()
+    // Method to add score
+    public void AddScore(int value)
     {
-        for (int i = 0; i < zonePrefabs.Length; i++)
-        {
-            if (zonePrefabs[i] == null)
-            {
-                Debug.LogError($"Zone prefab for Level {i + 1} is not assigned in the Inspector!");
-            }
-        }
+        score += value;
+        UpdateUI();
     }
 
+    // Method to decrease lives
     public void LoseLife()
     {
         lives--;
         UpdateUI();
 
-        if (lives > 0)
+        if (lives <= 0)
         {
-            RespawnBee();
-            StartCoroutine(PauseAfterRespawn());
-        }
-        else
-        {
-            finalScore = score;
-            SceneManager.LoadScene("DeathScene");
+            GameOver();
         }
     }
 
-    private IEnumerator PauseAfterRespawn()
-    {
-        if (beeMovement != null) beeMovement.enabled = false;
-
-        yield return new WaitForSeconds(3f);
-
-        if (beeMovement != null) beeMovement.enabled = true;
-    }
-
+    // Update the UI
     private void UpdateUI()
     {
         if (scoreText != null) scoreText.text = "Score: " + score;
         if (livesText != null) livesText.text = "Lives: " + lives;
-        if (levelText != null) levelText.text = "Level: " + (currentLevel + 1);
+        if (levelText != null) levelText.text = "Level: " + SceneManager.GetActiveScene().name;
     }
 
-    private void UpdateProgressBar()
+    // Restart the game on game over
+    private void GameOver()
     {
-        if (progressBar != null && currentLevel < balloonsPerLevel.Length)
-        {
-            int balloonsThisLevel = balloonsPerLevel[currentLevel];
-            progressBar.size = (float)(score - GetLevelThreshold(currentLevel - 1)) / balloonsThisLevel;
-        }
+        Debug.Log("Game Over!");
+        SceneManager.LoadScene("GameOver"); // Create a GameOver scene for this
     }
 
-    private void RespawnBee()
+    // Transition to the next level
+    public void NextLevel()
     {
-        if (bee != null)
+        int nextSceneIndex = SceneManager.GetActiveScene().buildIndex + 1;
+
+        if (nextSceneIndex < SceneManager.sceneCountInBuildSettings)
         {
-            bee.transform.position = Vector3.zero;
+            SceneManager.LoadScene(nextSceneIndex);
         }
         else
         {
-            Debug.LogError("Bee reference is null!");
-        }
-    }
-
-    public void AddScore(int value)
-    {
-        score += value;
-        UpdateUI();
-        UpdateProgressBar();
-
-        if (score >= GetLevelThreshold(currentLevel))
-        {
-            HandleLevelTransition();
-        }
-    }
-
-    private int GetLevelThreshold(int level)
-    {
-        switch (level)
-        {
-            case 0: return 92;
-            case 1: return 159;
-            case 2: return 209;
-            case 3: return 273;
-            default: return int.MaxValue;
-        }
-    }
-
-    private void HandleLevelTransition()
-    {
-        if (currentLevel < balloonsPerLevel.Length - 1)
-        {
-            currentLevel++;
-            Debug.Log($"Transitioning to Level {currentLevel + 1}");
-
-            if (activeZone != null) Destroy(activeZone);
-
-            LoadZone(currentLevel);
-
-            RespawnBee();
-            UpdateUI();
-            UpdateProgressBar();
-        }
-        else
-        {
-            Debug.Log("Final level reached.");
-            if (activeZone != null) Destroy(activeZone);
-
-            CompleteGame();
-        }
-    }
-
-    private void LoadZone(int level)
-    {
-        if (level < zonePrefabs.Length)
-        {
-            if (zonePrefabs[level] == null)
-            {
-                Debug.LogError($"Zone prefab for Level {level + 1} is not assigned in the Inspector!");
-                return;
-            }
-
-            activeZone = Instantiate(zonePrefabs[level]);
-            Debug.Log($"Zone {level + 1} loaded: {zonePrefabs[level].name}");
-
-            // Notify BeeMovement to find the new boundary
-            if (bee != null)
-            {
-                BeeMovement beeMovement = bee.GetComponent<BeeMovement>();
-                if (beeMovement != null)
-                {
-                    beeMovement.FindBoundary();
-                    Debug.Log("BeeMovement boundary updated.");
-                }
-                else
-                {
-                    Debug.LogError("BeeMovement script is missing on the bee!");
-                }
-            }
-        }
-        else
-        {
-            Debug.LogError($"Zone prefab for level {level + 1} is out of range!");
-        }
-    }
-
-    private void CompleteGame()
-    {
-        finalScore = score;
-        Debug.Log("Game completed! Transitioning to VictoryScene.");
-        progressBar.size = 1.0f;
-        SceneManager.LoadScene("VictoryScene");
-    }
-
-    private void SpawnBee()
-    {
-        if (beePrefab != null)
-        {
-            bee = Instantiate(beePrefab, Vector3.zero, Quaternion.identity);
-            beeMovement = bee.GetComponent<BeeMovement>();
-        }
-        else
-        {
-            Debug.LogError("Bee prefab not assigned!");
+            Debug.Log("You completed all levels!");
+            SceneManager.LoadScene("EndScene"); // Create an EndScene for this
         }
     }
 }
