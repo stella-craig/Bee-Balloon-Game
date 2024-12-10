@@ -1,4 +1,0 @@
-repository "Bee Balloon Game@stellacraig@cloud"
-  path "/"
-    br "/main"
-    co "/main"
