@@ -1,44 +1,77 @@
 using UnityEngine;
-using Firebase;
-using Firebase.Extensions;
-using Firebase.Firestore;
 using System.Collections;
 
 public class FirebaseInitializer : MonoBehaviour
 {
-    private FirebaseApp app;
-    private FirebaseFirestore firestore;
+    public string firebaseConfigPath = "google-services.js"; // File in StreamingAssets folder
 
     private void Start()
     {
-        // Initialize Firebase on start
-        InitializeFirebase();
+        // Load Firebase config on start
+        LoadFirebaseConfig();
     }
 
-    void InitializeFirebase()
+    private void LoadFirebaseConfig()
     {
-        FirebaseApp.CheckAndFixDependenciesAsync().ContinueWithOnMainThread(task =>
-        {
-            FirebaseApp app = FirebaseApp.DefaultInstance;
-            firestore = FirebaseFirestore.GetInstance(app);
-            Debug.Log("Firebase initialized successfully.");
-        });
+        string configPath = Application.streamingAssetsPath + "/" + firebaseConfigPath;
+
+        // Load the config file asynchronously
+        StartCoroutine(LoadConfigFromFile(configPath));
     }
 
-    // Function to send player data to Firestore
-    public void SendPlayerData(string playerId, int score, string timePlayed)
+    private IEnumerator LoadConfigFromFile(string path)
     {
-        DocumentReference playerRef = firestore.Collection("players").Document(playerId);
-        playerRef.SetAsync(new { score = score, timePlayed = timePlayed }).ContinueWithOnMainThread(task =>
+        using (var www = new UnityEngine.Networking.UnityWebRequest(path))
         {
-            if (task.IsCompleted)
+            www.downloadHandler = new UnityEngine.Networking.DownloadHandlerBuffer();
+            yield return www.SendWebRequest();
+
+            if (www.result == UnityEngine.Networking.UnityWebRequest.Result.Success)
             {
-                Debug.Log("Player data saved to Firestore!");
+                string config = www.downloadHandler.text;
+
+                try
+                {
+                    // Extract the JSON part of the file
+                    string jsonConfig = ExtractFirebaseConfig(config);
+                    Debug.Log("Parsed Firebase Config JSON: " + jsonConfig);
+
+                    // Use postMessage to send config to JavaScript
+                    SendMessageToBrowser(jsonConfig);
+                }
+                catch (System.Exception e)
+                {
+                    Debug.LogError("Failed to parse Firebase config: " + e.Message);
+                }
             }
             else
             {
-                Debug.LogError("Error saving player data: " + task.Exception);
+                Debug.LogError($"Failed to load Firebase config from {path}: {www.error}");
             }
-        });
+        }
+    }
+
+    private string ExtractFirebaseConfig(string config)
+    {
+        // Extract the JSON part of the google-services.js file
+        int startIndex = config.IndexOf("{", config.IndexOf("const firebaseConfig ="));
+        int endIndex = config.LastIndexOf("}");
+
+        if (startIndex == -1 || endIndex == -1 || startIndex >= endIndex)
+        {
+            throw new System.Exception("Invalid Firebase config file format.");
+        }
+
+        // Return the JSON substring
+        return config.Substring(startIndex, endIndex - startIndex + 1);
+    }
+
+
+    private void SendMessageToBrowser(string jsonConfig)
+    {
+        string escapedConfig = jsonConfig.Replace("\"", "\\\""); // Escape quotes for JavaScript
+        string jsCode = $"window.postMessage({escapedConfig}, '*');";
+        Debug.Log("Sending to browser: " + jsCode);
+        Application.ExternalEval(jsCode);
     }
 }
