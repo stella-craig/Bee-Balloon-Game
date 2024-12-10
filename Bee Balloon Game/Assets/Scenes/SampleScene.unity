@@ -644,7 +644,7 @@ MonoBehaviour:
   levelText: {fileID: 954125910}
   finalScore: 0
   progressBar: {fileID: 745526861}
-  balloonsPerLevel: 4300000082000000c8000000
+  balloonsPerLevel: 4300000082000000c800000008010000
   beePrefab: {fileID: 1695227210185485178, guid: 9c341a85d85d2074780b0b39f3c2d995, type: 3}
   zonePrefabs:
   - {fileID: 4621885990142697356, guid: 0b91895ba682c0d4c9b576c0cd4a1986, type: 3}

@@ -45,10 +45,22 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
+        ValidatePrefabs();
         SpawnBee();
         LoadZone(currentLevel);
         UpdateUI();
         UpdateProgressBar();
+    }
+
+    private void ValidatePrefabs()
+    {
+        for (int i = 0; i < zonePrefabs.Length; i++)
+        {
+            if (zonePrefabs[i] == null)
+            {
+                Debug.LogError($"Zone prefab for Level {i + 1} is not assigned in the Inspector!");
+            }
+        }
     }
 
     public void LoseLife()
@@ -146,6 +158,9 @@ public class GameManager : MonoBehaviour
         }
         else
         {
+            Debug.Log("Final level reached.");
+            if (activeZone != null) Destroy(activeZone);
+
             CompleteGame();
         }
     }
@@ -154,8 +169,14 @@ public class GameManager : MonoBehaviour
     {
         if (level < zonePrefabs.Length)
         {
+            if (zonePrefabs[level] == null)
+            {
+                Debug.LogError($"Zone prefab for Level {level + 1} is not assigned in the Inspector!");
+                return;
+            }
+
             activeZone = Instantiate(zonePrefabs[level]);
-            Debug.Log($"Zone {level + 1} loaded.");
+            Debug.Log($"Zone {level + 1} loaded: {zonePrefabs[level].name}");
 
             // Notify BeeMovement to find the new boundary
             if (bee != null)
@@ -164,12 +185,17 @@ public class GameManager : MonoBehaviour
                 if (beeMovement != null)
                 {
                     beeMovement.FindBoundary();
+                    Debug.Log("BeeMovement boundary updated.");
+                }
+                else
+                {
+                    Debug.LogError("BeeMovement script is missing on the bee!");
                 }
             }
         }
         else
         {
-            Debug.LogError($"Zone prefab for level {level + 1} not found!");
+            Debug.LogError($"Zone prefab for level {level + 1} is out of range!");
         }
     }
 
