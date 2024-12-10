@@ -18,6 +18,9 @@ public class GameManager : MonoBehaviour
     public Text timerText; // Reference to the Timer UI Text element
     private float timer = 120f; // 2 minutes (120 seconds)
 
+    //For respawn text
+    public Text countdownText; // Reference to the countdown text element when respawning
+
     // Final score for end screens
     public int finalScore;
 
@@ -115,10 +118,27 @@ public class GameManager : MonoBehaviour
     {
         if (beeMovement != null) beeMovement.enabled = false;
 
-        yield return new WaitForSeconds(3f);
+        // Show the countdown on the screen
+        for (int i = 3; i > 0; i--)
+        {
+            if (countdownText != null)
+            {
+                countdownText.text = i.ToString(); // Update the countdown text
+                countdownText.gameObject.SetActive(true); // Ensure the text is visible
+            }
+
+            yield return new WaitForSeconds(1f); // Wait for 1 second
+        }
+
+        // Hide the countdown text
+        if (countdownText != null)
+        {
+            countdownText.gameObject.SetActive(false);
+        }
 
         if (beeMovement != null) beeMovement.enabled = true;
     }
+
 
     private void UpdateUI()
     {
@@ -129,12 +149,33 @@ public class GameManager : MonoBehaviour
 
     private void UpdateProgressBar()
     {
-        if (progressBar != null && currentLevel < balloonsPerLevel.Length)
+        if (progressBar != null)
         {
-            int balloonsThisLevel = balloonsPerLevel[currentLevel];
-            progressBar.size = (float)(score - GetLevelThreshold(currentLevel - 1)) / balloonsThisLevel;
+            // Hardcoded progress for each level based on the thresholds
+            if (score < 92) // Level 1
+            {
+                progressBar.size = Mathf.Clamp01((float)score / 92);
+            }
+            else if (score < 159) // Level 2
+            {
+                progressBar.size = Mathf.Clamp01((float)(score - 92) / (159 - 92));
+            }
+            else if (score < 209) // Level 3
+            {
+                progressBar.size = Mathf.Clamp01((float)(score - 159) / (209 - 159));
+            }
+            else if (score <= 273) // Level 4
+            {
+                progressBar.size = Mathf.Clamp01((float)(score - 209) / (273 - 209));
+            }
+            else
+            {
+                // Cap the progress bar at 100% if the score exceeds all thresholds
+                progressBar.size = 1.0f;
+            }
         }
     }
+
 
     private void RespawnBee()
     {
@@ -179,11 +220,13 @@ public class GameManager : MonoBehaviour
             currentLevel++;
             Debug.Log($"Transitioning to Level {currentLevel + 1}");
 
+            // Destroy the current zone and load the next one
             if (activeZone != null) Destroy(activeZone);
-
             LoadZone(currentLevel);
 
-            RespawnBee();
+            RespawnBee(); // Respawn the bee at the center
+            StartCoroutine(PauseAfterRespawn()); // Show countdown and pause movement
+
             UpdateUI();
             UpdateProgressBar();
         }
@@ -191,10 +234,10 @@ public class GameManager : MonoBehaviour
         {
             Debug.Log("Final level reached.");
             if (activeZone != null) Destroy(activeZone);
-
             CompleteGame();
         }
     }
+
 
     private void LoadZone(int level)
     {
