@@ -293,4 +293,56 @@ public class GameManager : MonoBehaviour
             Debug.LogError("Bee prefab not assigned!");
         }
     }
+
+
+    /// <summary>
+    /// Debug method to instantly set the score and transition to the corresponding level.
+    /// </summary>
+    /// <param name="targetScore">The score to set for debugging.</param>
+    public void DebugSetScore(int targetScore)
+    {
+        // Set the score to the target value
+        score = targetScore;
+
+        // Determine the corresponding level based on the target score
+        if (targetScore < 92) // Level 1
+        {
+            currentLevel = 0;
+        }
+        else if (targetScore < 159) // Level 2
+        {
+            currentLevel = 1;
+        }
+        else if (targetScore < 209) // Level 3
+        {
+            currentLevel = 2;
+        }
+        else if (targetScore <= 273) // Level 4
+        {
+            currentLevel = 3;
+        }
+        else
+        {
+            Debug.LogWarning("Target score exceeds the maximum threshold.");
+            return; // Do nothing if the target score is out of range
+        }
+
+        Debug.Log($"Debug: Set score to {score}, transitioned to Level {currentLevel + 1}");
+
+        // Destroy the current active zone if it exists
+        if (activeZone != null)
+        {
+            Destroy(activeZone);
+        }
+
+        // Load the appropriate level zone
+        LoadZone(currentLevel);
+
+        // Respawn the bee and update the UI
+        RespawnBee();
+        UpdateUI();
+        UpdateProgressBar();
+    }
+
+
 }
