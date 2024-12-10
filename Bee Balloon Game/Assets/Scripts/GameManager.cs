@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.Collections;
 using UnityEngine.UI;
+using System;
 
 public class GameManager : MonoBehaviour
 {
@@ -13,6 +14,19 @@ public class GameManager : MonoBehaviour
     public Text scoreText;
     public Text livesText;
     public Text levelText;
+    private float timePlayed = 0f; // Tracks time spent in the game
+
+    //class to store player stats
+    [Serializable]
+    public class PlayerData
+    {
+        public int playerID;
+        public int score;
+        public int lives;
+        public float timePlayed;
+        public int level;
+        public string feedback;
+    }
 
     // Timer
     public Text timerText; // Reference to the Timer UI Text element
@@ -37,6 +51,8 @@ public class GameManager : MonoBehaviour
     private GameObject bee;
     private BeeMovement beeMovement;
 
+    private PlayerData playerStats;
+
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -48,6 +64,7 @@ public class GameManager : MonoBehaviour
             Instance = this;
             DontDestroyOnLoad(gameObject);
         }
+        playerStats = new PlayerData(); // Initialize the player stats object
     }
 
     private void Start()
@@ -66,12 +83,13 @@ public class GameManager : MonoBehaviour
         if (timer > 0)
         {
             timer -= Time.deltaTime;
+            timePlayed += Time.deltaTime; // Add time to the total played time
             UpdateTimerUI();
 
             if (timer <= 0)
             {
                 timer = 0; // Ensure timer doesn't go negative
-                SceneManager.LoadScene("DeathScene"); // Load DeathScene when time runs out
+                EndGame();
             }
         }
     }
@@ -109,8 +127,7 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            finalScore = score;
-            SceneManager.LoadScene("DeathScene");
+            EndGame();
         }
     }
 
@@ -341,9 +358,19 @@ public class GameManager : MonoBehaviour
         UpdateUI();
         UpdateProgressBar();
     }
-
     public void RestartGame()
     {
+        // Store feedback using PlayerPrefs (instead of relying on GameManager across scenes)
+        PlayerPrefs.SetString("PlayerFeedback", "Player feedback here"); // Replace with the actual feedback from EndScreenManager
+        PlayerPrefs.SetInt("PlayerScore", score);
+        PlayerPrefs.SetInt("PlayerLives", lives);
+        PlayerPrefs.SetFloat("PlayerTimePlayed", timePlayed);
+        PlayerPrefs.SetInt("PlayerLevel", currentLevel);
+
+        // Emit player stats as JSON and log
+        string playerDataJson = GetPlayerStatsAsJson();
+        Debug.Log("Emitting Player Stats as JSON: " + playerDataJson);
+
         // Reset all game state variables
         score = 0;
         lives = 3;
@@ -374,6 +401,7 @@ public class GameManager : MonoBehaviour
     }
 
 
+
     private void DestroyPersistingCamera()
     {
         GameObject mainCamera = GameObject.FindWithTag("MainCamera");
@@ -382,6 +410,65 @@ public class GameManager : MonoBehaviour
             Destroy(mainCamera);
         }
     }
+
+    public void EndGame()
+    {
+        // Save data in PlayerPrefs
+        PlayerPrefs.SetInt("FinalScore", score);
+        PlayerPrefs.SetFloat("TimePlayed", timePlayed);
+        PlayerPrefs.SetInt("FinalLevel", currentLevel + 1);
+
+        Debug.Log("Game Ended! Transitioning to End Screen.");
+
+        if (lives == 0)
+        {
+            SceneManager.LoadScene("DeathScene");
+        }
+        else
+        {
+            SceneManager.LoadScene("VictoryScene");
+        }
+    }
+
+
+    public string GetTimePlayed()
+    {
+        int minutes = Mathf.FloorToInt(timePlayed / 60);
+        int seconds = Mathf.FloorToInt(timePlayed % 60);
+        return $"{minutes:D2}:{seconds:D2}"; // Format as "MM:SS"
+    }
+
+
+    // Add method to emit player data as JSON, including feedback
+    public string GetPlayerStatsAsJson()
+    {
+        PlayerData playerData = new PlayerData
+        {
+            playerID = UnityEngine.Random.Range(1000, 9999), // Use random ID for now or implement real logic
+            score = score,
+            lives = lives,
+            timePlayed = Time.timeSinceLevelLoad, // Time since the level loaded
+            level = currentLevel + 1,
+        };
+
+        string json = JsonUtility.ToJson(playerData);
+        Debug.Log("Player Data JSON: " + json);
+
+        return json;
+    }
+
+
+    public void SetPlayerFeedback(string feedback)
+    {
+        // Store the feedback in the PlayerData object
+        playerStats.feedback = feedback;
+
+        // Log the feedback for verification
+        Debug.Log("Player feedback set: " + feedback);
+    }
+
+
+
 
 
 }
