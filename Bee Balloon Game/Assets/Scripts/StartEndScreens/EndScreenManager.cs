@@ -19,6 +19,15 @@ public class EndScreenManager : MonoBehaviour
         Debug.Log("Restart button clicked!");
         Debug.Log($"Current Scene: {SceneManager.GetActiveScene().name}");
 
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.RestartGame();
+        }
+        else
+        {
+            Debug.LogError("GameManager instance is missing. Unable to restart.");
+        }
+
         if (Application.CanStreamedLevelBeLoaded("StartScene"))
         {
             Debug.Log("StartScene found. Loading...");
