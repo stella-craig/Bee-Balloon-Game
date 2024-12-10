@@ -2,47 +2,59 @@ using UnityEngine;
 
 public class Balloon : MonoBehaviour
 {
-    // Reference to the GameManager or LevelManager script to track score
-    public int scoreValue = 1; // Points awarded for popping this balloon
+    public int scoreValue = 1; // Points for popping the balloon
+    public GameObject popEffect; // Particle effect prefab
+    public AudioClip popSound; // Sound effect for popping
+    private AudioSource audioSource; // For playing sounds
+    private bool isPopped = false; // Prevent multiple triggers
 
-    // Particle system to show pop effect
-    public GameObject popEffect;
-
-    // Sound effect for popping
-    public AudioClip popSound;
-    private AudioSource audioSource;
+    void Awake()
+    {
+        // Ensure AudioSource is initialized early
+        audioSource = GetComponent<AudioSource>() ?? gameObject.AddComponent<AudioSource>();
+        audioSource.playOnAwake = false;
+        audioSource.volume = 1f;
+        audioSource.spatialBlend = 0f; // 2D sound
+    }
 
     void Start()
     {
-        // Get or add an AudioSource component
-        audioSource = GetComponent<AudioSource>();
-        if (audioSource == null)
+        if (popSound == null)
         {
-            audioSource = gameObject.AddComponent<AudioSource>();
+            Debug.LogWarning("PopSound is not assigned in the Balloon script. Please check the Inspector.");
         }
+
+        Debug.Log($"AudioSource initialized: {audioSource != null}");
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        // Check if the colliding object is the bee
+        if (isPopped) return; // Prevent multiple triggers
+        isPopped = true;
+
         if (collision.CompareTag("Bee"))
         {
-            // Play pop sound
-            if (popSound != null)
+            if (audioSource != null && popSound != null)
             {
+                Debug.Log($"Playing sound: {popSound.name}");
                 audioSource.PlayOneShot(popSound);
+                Debug.Log("Sound played successfully.");
+            }
+            else
+            {
+                Debug.LogError($"AudioSource or PopSound is missing. AudioSource: {audioSource}, PopSound: {popSound}");
             }
 
-            // Instantiate pop effect
             if (popEffect != null)
             {
                 Instantiate(popEffect, transform.position, Quaternion.identity);
             }
 
-            // Update score
-            GameManager.Instance.AddScore(scoreValue);
+            if (GameManager.Instance != null)
+            {
+                GameManager.Instance.AddScore(scoreValue);
+            }
 
-            // Destroy the balloon
             Destroy(gameObject);
         }
     }
