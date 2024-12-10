@@ -2,7 +2,6 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.Collections;
 using UnityEngine.UI;
-using TMPro;
 
 public class GameManager : MonoBehaviour
 {
@@ -19,16 +18,16 @@ public class GameManager : MonoBehaviour
     public int finalScore;
 
     // Level and progress tracking
-    public Scrollbar progressBar; // Assign your Scrollbar in the Inspector
-    public int[] balloonsPerLevel = { 67, 130, 200 }; // Total balloons for each level
+    public Scrollbar progressBar;
+    public int[] balloonsPerLevel = { 92, 67, 50, 64 };
     private int currentLevel = 0;
-    private int levelStartScore = 0;
 
-    [Header("Level References")]
-    public GameObject bee; // Drag the Bee GameObject here in the Inspector
-    public GameObject branchesZone; // Level 1 reference
-    public GameObject fishZone;     // Level 2 reference
+    [Header("Zone Prefabs")]
+    public GameObject beePrefab;
+    public GameObject[] zonePrefabs;
 
+    private GameObject activeZone;
+    private GameObject bee;
     private BeeMovement beeMovement;
 
     private void Awake()
@@ -46,29 +45,10 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-        if (bee != null)
-        {
-            beeMovement = bee.GetComponent<BeeMovement>();
-        }
-
-        // Activate only the first level at the start
-        if (branchesZone != null) branchesZone.SetActive(true);
-        if (fishZone != null) fishZone.SetActive(false);
-
+        SpawnBee();
+        LoadZone(currentLevel);
         UpdateUI();
         UpdateProgressBar();
-    }
-
-    public void AddScore(int value)
-    {
-        score += value;
-        UpdateUI();
-        UpdateProgressBar();
-
-        if (score >= levelStartScore + balloonsPerLevel[currentLevel])
-        {
-            NextLevel();
-        }
     }
 
     public void LoseLife()
@@ -83,24 +63,18 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            finalScore = score; // Store the final score
+            finalScore = score;
             SceneManager.LoadScene("DeathScene");
         }
     }
 
     private IEnumerator PauseAfterRespawn()
     {
-        if (beeMovement != null)
-        {
-            beeMovement.enabled = false;
-        }
+        if (beeMovement != null) beeMovement.enabled = false;
 
         yield return new WaitForSeconds(3f);
 
-        if (beeMovement != null)
-        {
-            beeMovement.enabled = true;
-        }
+        if (beeMovement != null) beeMovement.enabled = true;
     }
 
     private void UpdateUI()
@@ -112,63 +86,10 @@ public class GameManager : MonoBehaviour
 
     private void UpdateProgressBar()
     {
-        if (progressBar != null)
+        if (progressBar != null && currentLevel < balloonsPerLevel.Length)
         {
             int balloonsThisLevel = balloonsPerLevel[currentLevel];
-            progressBar.size = (float)(score - levelStartScore) / balloonsThisLevel;
-        }
-    }
-
-    private void NextLevel()
-    {
-        if (currentLevel + 1 < balloonsPerLevel.Length)
-        {
-            currentLevel++;
-            levelStartScore = score;
-            UpdateUI();
-            UpdateProgressBar();
-            StartCoroutine(LevelTransitionRoutine());
-        }
-        else
-        {
-            finalScore = score; // Store the final score
-            SceneManager.LoadScene("VictoryScene"); 
-        }
-    }
-
-    private IEnumerator LevelTransitionRoutine()
-    {
-        RespawnBee();
-
-        if (beeMovement != null)
-        {
-            beeMovement.enabled = false;
-        }
-
-        TransitionToNextLevel();
-
-        yield return new WaitForSeconds(3f);
-
-        if (beeMovement != null)
-        {
-            beeMovement.enabled = true;
-        }
-    }
-
-    private void TransitionToNextLevel()
-    {
-        Debug.Log($"Transitioning to Level {currentLevel + 1}");
-
-        // Handle level transitions explicitly
-        if (currentLevel == 1)
-        {
-            if (branchesZone != null) branchesZone.SetActive(false);
-            if (fishZone != null) fishZone.SetActive(true);
-            Debug.Log("Transitioned to FishZone (Level 2).");
-        }
-        else
-        {
-            Debug.LogError("Transition logic for this level is not set up!");
+            progressBar.size = (float)(score - GetLevelThreshold(currentLevel - 1)) / balloonsThisLevel;
         }
     }
 
@@ -176,12 +97,100 @@ public class GameManager : MonoBehaviour
     {
         if (bee != null)
         {
-            bee.transform.position = Vector3.zero; // Reset bee to center
-            Debug.Log("Bee respawned at the center.");
+            bee.transform.position = Vector3.zero;
         }
         else
         {
             Debug.LogError("Bee reference is null!");
+        }
+    }
+
+    public void AddScore(int value)
+    {
+        score += value;
+        UpdateUI();
+        UpdateProgressBar();
+
+        if (score >= GetLevelThreshold(currentLevel))
+        {
+            HandleLevelTransition();
+        }
+    }
+
+    private int GetLevelThreshold(int level)
+    {
+        switch (level)
+        {
+            case 0: return 92;
+            case 1: return 159;
+            case 2: return 209;
+            case 3: return 273;
+            default: return int.MaxValue;
+        }
+    }
+
+    private void HandleLevelTransition()
+    {
+        if (currentLevel < balloonsPerLevel.Length - 1)
+        {
+            currentLevel++;
+            Debug.Log($"Transitioning to Level {currentLevel + 1}");
+
+            if (activeZone != null) Destroy(activeZone);
+
+            LoadZone(currentLevel);
+
+            RespawnBee();
+            UpdateUI();
+            UpdateProgressBar();
+        }
+        else
+        {
+            CompleteGame();
+        }
+    }
+
+    private void LoadZone(int level)
+    {
+        if (level < zonePrefabs.Length)
+        {
+            activeZone = Instantiate(zonePrefabs[level]);
+            Debug.Log($"Zone {level + 1} loaded.");
+
+            // Notify BeeMovement to find the new boundary
+            if (bee != null)
+            {
+                BeeMovement beeMovement = bee.GetComponent<BeeMovement>();
+                if (beeMovement != null)
+                {
+                    beeMovement.FindBoundary();
+                }
+            }
+        }
+        else
+        {
+            Debug.LogError($"Zone prefab for level {level + 1} not found!");
+        }
+    }
+
+    private void CompleteGame()
+    {
+        finalScore = score;
+        Debug.Log("Game completed! Transitioning to VictoryScene.");
+        progressBar.size = 1.0f;
+        SceneManager.LoadScene("VictoryScene");
+    }
+
+    private void SpawnBee()
+    {
+        if (beePrefab != null)
+        {
+            bee = Instantiate(beePrefab, Vector3.zero, Quaternion.identity);
+            beeMovement = bee.GetComponent<BeeMovement>();
+        }
+        else
+        {
+            Debug.LogError("Bee prefab not assigned!");
         }
     }
 }
