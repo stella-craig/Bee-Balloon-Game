@@ -419,6 +419,7 @@ public class GameManager : MonoBehaviour
         PlayerPrefs.SetInt("FinalLevel", currentLevel + 1);
 
         Debug.Log("Game Ended! Transitioning to End Screen.");
+        DestroyPersistingCamera();
 
         if (lives == 0)
         {
