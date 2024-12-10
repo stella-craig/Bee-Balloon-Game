@@ -14,6 +14,10 @@ public class GameManager : MonoBehaviour
     public Text livesText;
     public Text levelText;
 
+    // Timer
+    public Text timerText; // Reference to the Timer UI Text element
+    private float timer = 120f; // 2 minutes (120 seconds)
+
     // Final score for end screens
     public int finalScore;
 
@@ -50,6 +54,33 @@ public class GameManager : MonoBehaviour
         LoadZone(currentLevel);
         UpdateUI();
         UpdateProgressBar();
+        UpdateTimerUI(); // Initialize the timer UI
+    }
+
+    private void Update()
+    {
+        // Update the countdown timer
+        if (timer > 0)
+        {
+            timer -= Time.deltaTime;
+            UpdateTimerUI();
+
+            if (timer <= 0)
+            {
+                timer = 0; // Ensure timer doesn't go negative
+                SceneManager.LoadScene("DeathScene"); // Load DeathScene when time runs out
+            }
+        }
+    }
+
+    private void UpdateTimerUI()
+    {
+        if (timerText != null)
+        {
+            int minutes = Mathf.FloorToInt(timer / 60);
+            int seconds = Mathf.FloorToInt(timer % 60);
+            timerText.text = $"{minutes:D2}:{seconds:D2}";
+        }
     }
 
     private void ValidatePrefabs()
