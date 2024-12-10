@@ -10,9 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 5916992879355490095}
   - component: {fileID: 5560241130051428504}
-  - component: {fileID: 7325377635962682884}
   - component: {fileID: -3112690400512769593}
-  - component: {fileID: 7566352019608918645}
+  - component: {fileID: 3128435033756755643}
   m_Layer: 0
   m_Name: Red_Slide
   m_TagString: Bomb
@@ -30,7 +29,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: -1.381, z: 0}
-  m_LocalScale: {x: 4.3142953, y: 0.5581, z: 1}
+  m_LocalScale: {x: 2.426405, y: 0.87814766, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -87,18 +86,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &7325377635962682884
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8959762939970409059}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 801a493c25810694086933bed34a9dac, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!61 &-3112690400512769593
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -144,7 +131,7 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
---- !u!114 &7566352019608918645
+--- !u!114 &3128435033756755643
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -153,6 +140,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 8959762939970409059}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 66e60c96c6fc16945b62de253ada698d, type: 3}
+  m_Script: {fileID: 11500000, guid: 3a716bae06a039946929262b3d1c82b8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  speed: 1
+  pauseTime: 2.5
