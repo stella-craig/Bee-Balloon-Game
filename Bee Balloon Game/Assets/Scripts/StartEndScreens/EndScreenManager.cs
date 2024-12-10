@@ -43,7 +43,6 @@ public class EndScreenManager : MonoBehaviour
     {
         // Emit all data, including feedback
         EmitPlayerData();
-
         Debug.Log("Restarting game...");
         SceneManager.LoadScene("StartScene");
     }
